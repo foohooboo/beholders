@@ -57,10 +57,25 @@ window.addEventListener('load', function(){
             this.game = game;
             this.collisionX = Math.random() * this.game.width;
             this.collisionY = Math.random() * this.game.height;
-            this.collisionRadius = 60;
+            this.collisionRadius = 50;
+            this.image = document.getElementById('obstacles');
+            this.spriteWidth = 250;
+            this.spriteHeight = 250;
+            this.width = this.spriteWidth;
+            this.height = this.spriteHeight;
+            this.spriteX = this.collisionX - this.width * 0.5;
+            this.spriteY = this.collisionY - this.height * 0.5 - 80;
         }
 
         draw(context){
+            // draw sprite
+            context.drawImage(
+                this.image,                             // src image
+                0, 0,                                   // src x/y
+                this.spriteWidth, this.spriteHeight,    // src w/h
+                this.spriteX, this.spriteY,             // dest x/y
+                this.width, this.height                 // dest w/h
+            );
             // draw obstacle circle
             context.beginPath();
             context.arc(this.collisionX, this.collisionY, this.collisionRadius, 0, Math.PI * 2);
@@ -78,7 +93,7 @@ window.addEventListener('load', function(){
             this.width = this.canvas.width;
             this.height = this.canvas.height;
             this.player = new Player(this);
-            this.numberOfObstacles = 6;
+            this.numberOfObstacles = 7;
             this.obstacles = [];
             this.mouse = {
                 x: this.width * 0.5,
