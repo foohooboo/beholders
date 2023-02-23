@@ -65,16 +65,18 @@ window.addEventListener('load', function(){
             this.height = this.spriteHeight;
             this.spriteX = this.collisionX - this.width * 0.5;
             this.spriteY = this.collisionY - this.height * 0.5 - 80;
+            this.frameX = Math.floor(Math.random() * 4);
+            this.frameY = Math.floor(Math.random() * 3);
         }
 
         draw(context){
             // draw sprite
             context.drawImage(
-                this.image,                             // src image
-                0, 0,                                   // src x/y
-                this.spriteWidth, this.spriteHeight,    // src w/h
-                this.spriteX, this.spriteY,             // dest x/y
-                this.width, this.height                 // dest w/h
+                this.image,                                                         // src image
+                this.frameX * this.spriteWidth, this.frameY * this.spriteHeight,    // src x/y
+                this.spriteWidth, this.spriteHeight,                                // src w/h
+                this.spriteX, this.spriteY,                                         // dest x/y
+                this.width, this.height                                             // dest w/h
             );
             // draw obstacle circle
             context.beginPath();
@@ -92,6 +94,7 @@ window.addEventListener('load', function(){
             this.canvas = canvas;
             this.width = this.canvas.width;
             this.height = this.canvas.height;
+            this.topMargin = 100;
             this.player = new Player(this);
             this.numberOfObstacles = 7;
             this.obstacles = [];
@@ -135,12 +138,15 @@ window.addEventListener('load', function(){
                     const dx = testObstacle.collisionX - obstacle.collisionX;
                     const dy = testObstacle.collisionY - obstacle.collisionY;
                     const distance = Math.hypot(dy, dx);
-                    const minDistance = testObstacle.collisionRadius + obstacle.collisionRadius;
+                    const obstacleBuffer = 100;
+                    const minDistance = testObstacle.collisionRadius + obstacle.collisionRadius + obstacleBuffer;
                     if (distance < minDistance){
                         overlap = true;
                     }
                 });
-                if (!overlap){
+                if (!overlap && 
+                    testObstacle.spriteX > 40 && testObstacle.spriteX < this.width - testObstacle.width && 
+                    testObstacle.spriteY > this.topMargin && testObstacle.spriteY < this.height){
                     this.obstacles.push(testObstacle);
                 }
                 attempts++;
