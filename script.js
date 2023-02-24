@@ -49,6 +49,10 @@ window.addEventListener('load', function(){
                 this.collisionX += this.speedX * this.baseSpeed;
                 this.collisionY += this.speedY * this.baseSpeed;
             }
+
+            // check collisions
+            this.game.obstacles.forEach(obstacle => {
+            });
         }
     }
 
@@ -57,7 +61,7 @@ window.addEventListener('load', function(){
             this.game = game;
             this.collisionX = Math.random() * this.game.width;
             this.collisionY = Math.random() * this.game.height;
-            this.collisionRadius = 50;
+            this.collisionRadius = 40;
             this.image = document.getElementById('obstacles');
             this.spriteWidth = 250;
             this.spriteHeight = 250;
@@ -123,10 +127,18 @@ window.addEventListener('load', function(){
             });
         }
 
+        checkCollision(a, b, buffer = 0){
+            const dx = a.collisionX - b.collisionX;
+            const dy = a.collisionY - b.collisionY;
+            const distance = Math.hypot(dy, dx);
+            return (distance < a.collisionRadius + b.collisionRadius + buffer);
+        }
+
         render(context){
-            this.player.draw(context);
+            this.obstacles.concat(this.player).sort((a, b) => (a.collisionY > b.collisionY) ? 1 : -1).forEach(renderable => {
+                renderable.draw(context);
+            });
             this.player.update();
-            this.obstacles.forEach(obstacle => obstacle.draw(context));
         }
 
         init(){
@@ -135,12 +147,7 @@ window.addEventListener('load', function(){
                 let testObstacle = new Obstacle(this);
                 let overlap = false;
                 this.obstacles.forEach(obstacle => {
-                    const dx = testObstacle.collisionX - obstacle.collisionX;
-                    const dy = testObstacle.collisionY - obstacle.collisionY;
-                    const distance = Math.hypot(dy, dx);
-                    const obstacleBuffer = 100;
-                    const minDistance = testObstacle.collisionRadius + obstacle.collisionRadius + obstacleBuffer;
-                    if (distance < minDistance){
+                    if (this.checkCollision(testObstacle, obstacle, 100)){
                         overlap = true;
                     }
                 });
